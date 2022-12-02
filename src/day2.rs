@@ -6,9 +6,9 @@ use std::{
 
 #[derive(Copy, Clone)]
 enum Choice {
-    Rock,
-    Paper,
-    Scissors,
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3,
 }
 
 #[derive(Copy, Clone)]
@@ -35,7 +35,7 @@ fn main() {
             let score = parse_score(score_raw);
             let choice = get_desired_choice(opponent, score);
 
-            return (score as i32) + get_choice_score(choice);
+            return (score as i32) + (choice as i32);
         })
         .sum();
 
@@ -71,13 +71,5 @@ fn get_desired_choice(opponent: Choice, score: Score) -> Choice {
         (Choice::Paper, Score::Win) => Choice::Scissors,
 
         _ => opponent,
-    }
-}
-
-fn get_choice_score(choice: Choice) -> i32 {
-    match choice {
-        Choice::Rock => 1,
-        Choice::Paper => 2,
-        Choice::Scissors => 3,
     }
 }
