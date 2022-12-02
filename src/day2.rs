@@ -11,6 +11,7 @@ enum Choice {
     Scissors,
 }
 
+#[derive(Copy, Clone)]
 enum Score {
     Loss = 0,
     Draw = 3,
@@ -27,13 +28,14 @@ fn main() {
         .lines()
         .map(|line| {
             let line = line.expect("Failed to read a line!");
-            let (opponent_raw, me_raw) = line
+            let (opponent_raw, score_raw) = line
                 .split_once(' ')
                 .expect(&format!("Expected space separated parts: {}", line));
             let opponent = parse_choice(opponent_raw);
-            let me = parse_choice(me_raw);
+            let score = parse_score(score_raw);
+            let choice = get_desired_choice(opponent, score);
 
-            return (get_round_score(opponent, me) as i32) + get_choice_score(me);
+            return (score as i32) + get_choice_score(choice);
         })
         .sum();
 
@@ -42,24 +44,33 @@ fn main() {
 
 fn parse_choice(raw_choice: &str) -> Choice {
     match raw_choice {
-        "A" | "X" => Choice::Rock,
-        "B" | "Y" => Choice::Paper,
-        "C" | "Z" => Choice::Scissors,
+        "A" => Choice::Rock,
+        "B" => Choice::Paper,
+        "C" => Choice::Scissors,
         _ => panic!("Invalid choice: {}", raw_choice),
     }
 }
 
-fn get_round_score(opponent: Choice, me: Choice) -> Score {
-    match (opponent, me) {
-        (Choice::Rock, Choice::Scissors) => Score::Loss,
-        (Choice::Scissors, Choice::Paper) => Score::Loss,
-        (Choice::Paper, Choice::Rock) => Score::Loss,
+fn parse_score(raw_result: &str) -> Score {
+    match raw_result {
+        "X" => Score::Loss,
+        "Y" => Score::Draw,
+        "Z" => Score::Win,
+        _ => panic!("Invalid result: {}", raw_result),
+    }
+}
 
-        (Choice::Rock, Choice::Paper) => Score::Win,
-        (Choice::Scissors, Choice::Rock) => Score::Win,
-        (Choice::Paper, Choice::Scissors) => Score::Win,
+fn get_desired_choice(opponent: Choice, score: Score) -> Choice {
+    match (opponent, score) {
+        (Choice::Rock, Score::Loss) => Choice::Scissors,
+        (Choice::Scissors, Score::Loss) => Choice::Paper,
+        (Choice::Paper, Score::Loss) => Choice::Rock,
 
-        _ => Score::Draw,
+        (Choice::Rock, Score::Win) => Choice::Paper,
+        (Choice::Scissors, Score::Win) => Choice::Rock,
+        (Choice::Paper, Score::Win) => Choice::Scissors,
+
+        _ => opponent,
     }
 }
 
