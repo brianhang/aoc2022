@@ -16,17 +16,16 @@ fn main() {
 
     let total_priority: u32 = groups
         .map(|lines| {
-            let items: Vec<HashSet<char>> = lines
+            let mut items: Vec<HashSet<char>> = lines
                 .into_iter()
                 .map(|line| HashSet::from_iter(line.chars()))
                 .collect();
 
-            if let Some((first_items, rest_items)) = items.split_first() {
-                let mut first_items = first_items.clone();
+            if let Some((first_items, rest_items)) = items.split_first_mut() {
                 for other_items in rest_items {
                     first_items.retain(|item| other_items.contains(item));
                 }
-                return first_items.into_iter().map(get_priority).sum();
+                return first_items.iter().map(get_priority).sum();
             }
             return 0;
         })
@@ -35,10 +34,10 @@ fn main() {
     println!("{}", total_priority);
 }
 
-fn get_priority(item: char) -> u32 {
-    match item {
-        'a'..='z' => (item as u32) - ('a' as u32) + 1,
-        'A'..='Z' => (item as u32) - ('A' as u32) + 27,
+fn get_priority(item: &char) -> u32 {
+    match *item {
+        'a'..='z' => (*item as u32) - ('a' as u32) + 1,
+        'A'..='Z' => (*item as u32) - ('A' as u32) + 27,
         _ => panic!("invalid item: {}", item),
     }
 }
