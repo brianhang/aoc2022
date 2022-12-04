@@ -23,7 +23,7 @@ fn main() {
 }
 
 fn range_fully_contains(container: &Range<u32>, contained: &Range<u32>) -> bool {
-    return container.start <= contained.start && container.end >= contained.end;
+    return container.start <= contained.end && contained.start <= container.end;
 }
 
 fn parse_line(line: &String) -> (Range<u32>, Range<u32>) {
