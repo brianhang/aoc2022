@@ -15,14 +15,14 @@ fn main() {
         .lines()
         .filter(|line| {
             let (left, right) = parse_line(line.as_ref().unwrap());
-            return range_fully_contains(&left, &right) || range_fully_contains(&right, &left);
+            return ranges_overlap(&left, &right);
         })
         .count();
 
     println!("{}", num_pairs);
 }
 
-fn range_fully_contains(container: &Range<u32>, contained: &Range<u32>) -> bool {
+fn ranges_overlap(container: &Range<u32>, contained: &Range<u32>) -> bool {
     return container.start <= contained.end && contained.start <= container.end;
 }
 
