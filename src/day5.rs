@@ -24,10 +24,15 @@ fn main() {
     let buf = BufReader::new(file);
 
     let (mut stacks, moves) = parse_input(buf);
+    let mut crane: VecDeque<char> = VecDeque::new();
 
     for Move { count, from, to } in moves {
         for _ in 0..count {
             let from_crate = stacks[from].pop_back().unwrap();
+            crane.push_back(from_crate);
+        }
+        for _ in 0..count {
+            let from_crate = crane.pop_back().unwrap();
             stacks[to].push_back(from_crate);
         }
     }
