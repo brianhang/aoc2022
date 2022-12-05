@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+lazy_static = "1.4.0"
+regex = "1.7.0"
 
 [[bin]]
 name = "day-1"
@@ -22,3 +24,7 @@ path = "src/day3.rs"
 [[bin]]
 name = "day-4"
 path = "src/day4.rs"
+
+[[bin]]
+name = "day-5"
+path = "src/day5.rs"
