@@ -5,7 +5,7 @@ use std::{
     path::Path,
 };
 
-const MARKER_LEN: usize = 4;
+const MARKER_LEN: usize = 14;
 
 fn main() {
     let input_path = Path::new("src/inputs/day6.txt");
