@@ -12,7 +12,7 @@ struct File {
 }
 
 struct Dir {
-    name: String,
+    // name: String,
     entries: HashMap<String, Rc<RefCell<Entry>>>,
 }
 
@@ -30,33 +30,40 @@ fn main() {
 
     parse_file_system(buf, &root_dir);
 
-    let (_, answer) = total_size(&root_dir.clone(), 100_000);
-    println!("{}", answer);
+    let mut dir_sizes: Vec<usize> = Vec::new();
+    let total_used_space = find_dir_sizes(&root_dir.clone(), &mut dir_sizes);
+
+    dir_sizes.sort();
+
+    let total_size: usize = 70_000_000;
+    let total_unused_space = total_size - total_used_space;
+    let update_size: usize = 30_000_000;
+
+    for size in dir_sizes {
+        if total_unused_space + size >= update_size {
+            println!("{}", size);
+            return;
+        }
+    }
 }
 
-fn total_size(dir: &Rc<RefCell<Dir>>, max_size: usize) -> (usize, usize) {
+fn find_dir_sizes(dir: &Rc<RefCell<Dir>>, dir_sizes: &mut Vec<usize>) -> usize {
     let entries = &dir.borrow().entries;
-    let mut answer: usize = 0;
     let mut dir_size: usize = 0;
 
     for entry in entries.values() {
         match &*entry.borrow() {
             Entry::Dir(sub_dir) => {
-                let (sub_dir_size, sub_answer) = total_size(&sub_dir, max_size);
-                answer += sub_answer;
+                let sub_dir_size = find_dir_sizes(&sub_dir, dir_sizes);
                 dir_size += sub_dir_size;
             }
             Entry::File(file) => dir_size += file.borrow().size,
         }
     }
 
-    println!("{} -> {}", dir.borrow().name, dir_size);
+    dir_sizes.push(dir_size);
 
-    if dir_size <= max_size {
-        answer += dir_size;
-    }
-
-    return (dir_size, answer);
+    return dir_size;
 }
 
 fn parse_file_system(buf: BufReader<fs::File>, root_dir: &Rc<RefCell<Dir>>) {
@@ -125,7 +132,7 @@ fn parse_file_system(buf: BufReader<fs::File>, root_dir: &Rc<RefCell<Dir>>) {
 
 fn make_dir(name: String) -> Dir {
     return Dir {
-        name,
+        // name,
         entries: HashMap::new(),
     };
 }
